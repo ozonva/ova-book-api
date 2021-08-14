@@ -2,8 +2,17 @@ package main
 
 import (
 	"fmt"
+	"os"
+
+	cfg "github.com/ozonva/ova-book-api/internals/config"
 )
 
 func main() {
-	fmt.Println("Hi, it's ozonva/ova-book-api project init!")
+	if len(os.Args) < 2 {
+		fmt.Println("Не передан путь до файла конфигурации.")
+		return
+	}
+
+	configPath := os.Args[1]
+	cfg.ReadConfig(configPath)
 }
