@@ -2,27 +2,22 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"os"
-	"time"
 )
 
 type config struct {
-	SleepTimeout uint `json:"sleepTimeout"`
+	Host string `json:"host"`
+	Port uint   `json:"port"`
 }
 
-func ReadConfig(configPath string) {
+func ReadConfig(configPath string) config {
 	updateConfig := func(filePath string, config *config) {
 		configFile, err := os.Open(filePath)
-		defer func() {
-			configFile.Close()
-			fmt.Println("Файл '" + filePath + "' закрыт")
-			time.Sleep(time.Second * time.Duration(config.SleepTimeout))
-		}()
+		defer configFile.Close()
 
 		if err != nil {
-			fmt.Println(err)
-			return
+			log.Fatal(err)
 		}
 
 		jsonDecoder := json.NewDecoder(configFile)
@@ -30,8 +25,7 @@ func ReadConfig(configPath string) {
 	}
 
 	var config config
-	for {
-		updateConfig(configPath, &config)
-		fmt.Println("SleepTimeout ==", config.SleepTimeout)
-	}
+	updateConfig(configPath, &config)
+
+	return config
 }
