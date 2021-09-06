@@ -24,7 +24,9 @@ message ListBooksMessage {
 
 service BookService {
     rpc CreateBook (BookMessage) returns (BookMessage);
+    rpc MultiCreateBook (ListBooksMessage) returns (ListBooksMessage);
     rpc DescribeBook (CurrentBookMessage) returns (BookMessage);
     rpc ListBooks (google.protobuf.Empty) returns (ListBooksMessage);
+    rpc UpdateBook (BookMessage) returns (BookMessage);
     rpc RemoveBook (CurrentBookMessage) returns (BookMessage);
 }

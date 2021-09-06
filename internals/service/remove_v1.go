@@ -23,6 +23,8 @@ func (a *BookApi) RemoveBook(ctx context.Context, removeBook *api.CurrentBookMes
 		return nil, err
 	}
 
+	a.Producer.DeleteEvent(*descrBook)
+	a.deletedCounter.Inc()
 	return &api.BookMessage{
 		UserId: descrBook.UserId,
 		Title:  descrBook.Title,

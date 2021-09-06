@@ -20,8 +20,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookServiceClient interface {
 	CreateBook(ctx context.Context, in *BookMessage, opts ...grpc.CallOption) (*BookMessage, error)
+	MultiCreateBook(ctx context.Context, in *ListBooksMessage, opts ...grpc.CallOption) (*ListBooksMessage, error)
 	DescribeBook(ctx context.Context, in *CurrentBookMessage, opts ...grpc.CallOption) (*BookMessage, error)
 	ListBooks(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ListBooksMessage, error)
+	UpdateBook(ctx context.Context, in *BookMessage, opts ...grpc.CallOption) (*BookMessage, error)
 	RemoveBook(ctx context.Context, in *CurrentBookMessage, opts ...grpc.CallOption) (*BookMessage, error)
 }
 
@@ -36,6 +38,15 @@ func NewBookServiceClient(cc grpc.ClientConnInterface) BookServiceClient {
 func (c *bookServiceClient) CreateBook(ctx context.Context, in *BookMessage, opts ...grpc.CallOption) (*BookMessage, error) {
 	out := new(BookMessage)
 	err := c.cc.Invoke(ctx, "/ozonva.book.api.BookService/CreateBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookServiceClient) MultiCreateBook(ctx context.Context, in *ListBooksMessage, opts ...grpc.CallOption) (*ListBooksMessage, error) {
+	out := new(ListBooksMessage)
+	err := c.cc.Invoke(ctx, "/ozonva.book.api.BookService/MultiCreateBook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +71,15 @@ func (c *bookServiceClient) ListBooks(ctx context.Context, in *empty.Empty, opts
 	return out, nil
 }
 
+func (c *bookServiceClient) UpdateBook(ctx context.Context, in *BookMessage, opts ...grpc.CallOption) (*BookMessage, error) {
+	out := new(BookMessage)
+	err := c.cc.Invoke(ctx, "/ozonva.book.api.BookService/UpdateBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *bookServiceClient) RemoveBook(ctx context.Context, in *CurrentBookMessage, opts ...grpc.CallOption) (*BookMessage, error) {
 	out := new(BookMessage)
 	err := c.cc.Invoke(ctx, "/ozonva.book.api.BookService/RemoveBook", in, out, opts...)
@@ -74,8 +94,10 @@ func (c *bookServiceClient) RemoveBook(ctx context.Context, in *CurrentBookMessa
 // for forward compatibility
 type BookServiceServer interface {
 	CreateBook(context.Context, *BookMessage) (*BookMessage, error)
+	MultiCreateBook(context.Context, *ListBooksMessage) (*ListBooksMessage, error)
 	DescribeBook(context.Context, *CurrentBookMessage) (*BookMessage, error)
 	ListBooks(context.Context, *empty.Empty) (*ListBooksMessage, error)
+	UpdateBook(context.Context, *BookMessage) (*BookMessage, error)
 	RemoveBook(context.Context, *CurrentBookMessage) (*BookMessage, error)
 	mustEmbedUnimplementedBookServiceServer()
 }
@@ -87,11 +109,17 @@ type UnimplementedBookServiceServer struct {
 func (UnimplementedBookServiceServer) CreateBook(context.Context, *BookMessage) (*BookMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBook not implemented")
 }
+func (UnimplementedBookServiceServer) MultiCreateBook(context.Context, *ListBooksMessage) (*ListBooksMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MultiCreateBook not implemented")
+}
 func (UnimplementedBookServiceServer) DescribeBook(context.Context, *CurrentBookMessage) (*BookMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeBook not implemented")
 }
 func (UnimplementedBookServiceServer) ListBooks(context.Context, *empty.Empty) (*ListBooksMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBooks not implemented")
+}
+func (UnimplementedBookServiceServer) UpdateBook(context.Context, *BookMessage) (*BookMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBook not implemented")
 }
 func (UnimplementedBookServiceServer) RemoveBook(context.Context, *CurrentBookMessage) (*BookMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveBook not implemented")
@@ -123,6 +151,24 @@ func _BookService_CreateBook_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BookServiceServer).CreateBook(ctx, req.(*BookMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookService_MultiCreateBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBooksMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).MultiCreateBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozonva.book.api.BookService/MultiCreateBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).MultiCreateBook(ctx, req.(*ListBooksMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -163,6 +209,24 @@ func _BookService_ListBooks_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookService_UpdateBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).UpdateBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozonva.book.api.BookService/UpdateBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).UpdateBook(ctx, req.(*BookMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BookService_RemoveBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CurrentBookMessage)
 	if err := dec(in); err != nil {
@@ -193,12 +257,20 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BookService_CreateBook_Handler,
 		},
 		{
+			MethodName: "MultiCreateBook",
+			Handler:    _BookService_MultiCreateBook_Handler,
+		},
+		{
 			MethodName: "DescribeBook",
 			Handler:    _BookService_DescribeBook_Handler,
 		},
 		{
 			MethodName: "ListBooks",
 			Handler:    _BookService_ListBooks_Handler,
+		},
+		{
+			MethodName: "UpdateBook",
+			Handler:    _BookService_UpdateBook_Handler,
 		},
 		{
 			MethodName: "RemoveBook",
