@@ -6,11 +6,11 @@ import (
 
 // Описывает сущность "Книга"
 type Book struct {
-	UserId uint64
-	Title  string
-	Author string
-	ISBN10 string
-	ISBN13 string
+	UserId uint64 `db:"user_id"`
+	Title  string `db:"title"`
+	Author string `db:"author"`
+	ISBN10 string `db:"isbn10"`
+	ISBN13 string `db:"isbn13"`
 }
 
 // Возврращает строковое представление для сущности "Книга"

@@ -9,6 +9,11 @@ import (
 type config struct {
 	Host string `json:"host"`
 	Port uint   `json:"port"`
+
+	DBHost string `json:"dbhost"`
+	DBName string `json:"dbname"`
+	DBUser string `json:"dbuser"`
+	DBPwd  string `json:"dbpwd"`
 }
 
 func ReadConfig(configPath string) config {

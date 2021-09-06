@@ -13,23 +13,22 @@ func (a *BookApi) ListBooks(ctx context.Context, _ *emptypb.Empty) (*api.ListBoo
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Info().Msg("ListBooks")
 
-	books := []*api.BookMessage{
-		&api.BookMessage{
-			UserId: 321,
-			Title:  "Describe",
-			Author: "Describe Author",
-			ISBN10: "1234567890",
-			ISBN13: "1234567890123",
-		},
-		&api.BookMessage{
-			UserId: 123,
-			Title:  "Title",
-			Author: "Author",
-			ISBN10: "1234567890",
-			ISBN13: "1234567890123",
-		},
+	booksEntities, err := a.Repo.ListEntities(2, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	booksList := make([]*api.BookMessage, 0, 2)
+	for _, book := range booksEntities {
+		booksList = append(booksList, &api.BookMessage{
+			UserId: book.UserId,
+			Title:  book.Title,
+			Author: book.Author,
+			ISBN10: book.ISBN10,
+			ISBN13: book.ISBN13,
+		})
 	}
 	return &api.ListBooksMessage{
-		Books: books,
+		Books: booksList,
 	}, nil
 }
