@@ -4,5 +4,8 @@
     "dbhost": "127.0.0.1",
     "dbname": "ova_books",
     "dbuser": "ovabooks",
-    "dbpwd": "ovabooks"
+    "dbpwd": "ovabooks",
+    
+    "kafkaServers": "localhost:9092",
+    "prometheusExporter": "127.0.0.1:9102"
 }

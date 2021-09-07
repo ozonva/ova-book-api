@@ -14,6 +14,10 @@ type config struct {
 	DBName string `json:"dbname"`
 	DBUser string `json:"dbuser"`
 	DBPwd  string `json:"dbpwd"`
+
+	KafkaServers string `json:"kafkaServers"`
+
+	PrometheusExporter string `json:"prometheusExporter"`
 }
 
 func ReadConfig(configPath string) config {

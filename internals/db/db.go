@@ -118,6 +118,23 @@ func (repo *PGRepo) RemoveEntity(isbn10 string) error {
 	return err
 }
 
+// UpdateEntity(isbn10 string) (*book.Book, error)
+func (repo *PGRepo) UpdateEntity(isbn10 string, newBook book.Book) (*book.Book, error) {
+	_, err := repo.DescribeEntity(isbn10)
+	if err != nil {
+		return nil, err
+	}
+
+	updateQuery := sq.Update("books").Where(sq.Eq{"isbn10": isbn10}).
+		Set("user_id", newBook.UserId).
+		Set("title", newBook.Title).
+		Set("author", newBook.Author)
+
+	updateQuery = updateQuery.RunWith(repo.db).PlaceholderFormat(sq.Dollar)
+	_, err = updateQuery.Exec()
+	return &newBook, nil
+}
+
 var dbKey = "db"
 
 // Возвращает подключение к БД
